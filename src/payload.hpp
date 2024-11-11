@@ -8,7 +8,7 @@
 class LeafPayLoad {
 public:
     virtual size_t size() = 0;
-    virtual int32_t insert(int32_t id, const SPVEC& v) = 0;
+    virtual int32_t insert(int32_t id, TSVAL weight, const SPVEC& v) = 0;
     virtual std::vector<SPVEC> get_all_vectors() = 0;
     virtual std::set<int32_t> get_all_ids() = 0;
 

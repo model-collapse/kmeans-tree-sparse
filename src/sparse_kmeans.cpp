@@ -33,17 +33,17 @@ int32_t SparseKMeansModel::fit(const std::vector<SPVEC>& samples) {
     
     for (int32_t i = 0; i < this->_iters; i++) {
         int32_t res = this->iteration();
-        if (EX_END == res) {
+        if (EXK_END == res) {
             break;
-        } else if (EX_FAIL == res) {
-            return EX_FAIL;
+        } else if (EXK_FAIL == res) {
+            return EXK_FAIL;
         }
     }
 
     // defer
     this->_samples = NULL;
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 int32_t SparseKMeansModel::predict(const SPVEC& x) {
@@ -63,17 +63,17 @@ int32_t SparseKMeansModel::predict(const SPVEC& x) {
 
 int32_t SparseKMeansModel::iteration() {
     int32_t res = this->kmeans_e_step();
-    if (EX_FAIL == res) {
-        return EX_FAIL;
-    } else if (EX_END == res) {
-        return EX_END;
+    if (EXK_FAIL == res) {
+        return EXK_FAIL;
+    } else if (EXK_END == res) {
+        return EXK_END;
     }
 
-    if (EX_FAIL == this->kmeans_m_step()) {
-        return EX_FAIL;
+    if (EXK_FAIL == this->kmeans_m_step()) {
+        return EXK_FAIL;
     }
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 // calculate centers
@@ -102,7 +102,7 @@ int32_t SparseKMeansModel::kmeans_m_step() {
         // not implememted yet
     }
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 bool assignment_changed(const std::vector<int32_t>& assa, const std::vector<int32_t>& assb) {
@@ -115,26 +115,32 @@ int32_t SparseKMeansModel::kmeans_e_step() {
         std::vector<int32_t> new_assignment;
         new_assignment.resize(this->_samples->size());
 
+        bool failed = false;
         #pragma omp parallel
         for (int32_t i = 0; i < _samples->size(); i++) {
             int32_t cid = this->predict(this->_samples->at(i));
-            if (EX_FAIL == cid) {
-                return EX_FAIL;
+            if (EXK_FAIL == cid) {
+                failed = true;
+                break;
             } else {
                 new_assignment[i] = cid;
             }
         }
 
-        if (!assignment_changed(new_assignment, this->_assignment)) {
-            return EX_END;
+        if (failed) {
+            return EXK_FAIL;
         }
 
-        return EX_SUC;
+        if (!assignment_changed(new_assignment, this->_assignment)) {
+            return EXK_END;
+        }
+
+        return EXK_SUC;
     } else {
         // not implememted yet
     }
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 int32_t SparseKMeansModel::initialize_centers() {
@@ -179,10 +185,10 @@ int32_t SparseKMeansModel::initialize_centers() {
             t++;
         }
     } else {
-        return EX_FAIL;
+        return EXK_FAIL;
     }
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 

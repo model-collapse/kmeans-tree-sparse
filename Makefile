@@ -24,16 +24,16 @@ OBJS_C := $(patsubst %.c, $(BUILD_DIR)/%.o, $(NOT_DIR_SRCS_C))
 OBJS_CXX := $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(NOT_DIR_SRCS_CXX))
 OBJS := $(OBJS_C) $(OBJS_CXX)
 
-CFLAGS := 
+CFLAGS := -lpthread -fopenmp
+
+$(LIB_TARGET) : $(OBJS)
+	$(AR) rcs -o $(LIB_TARGET) $^
 
 $(OBJS_C): $(SRCS_C)
 	$(CC) $(CFLAGS) $(INC_DIRS) -c $< -o $@
 
 $(OBJS_CXX): $(SRCS_CXX)
 	$(CXX) $(CFLAGS) $(INC_DIRS) -c $< -o $@
-
-$(LIB_TARGET) : $(OBJS)
-	$(AR) rcs -o $(LIB_TARGET) $^
 
 clean:
 	rm -rf $(BUILD_DIR)/*

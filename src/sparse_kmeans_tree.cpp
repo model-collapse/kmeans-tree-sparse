@@ -26,11 +26,11 @@ int32_t SparseKMeansTree::fit(const std::vector<SPVEC>& training_samples) {
 
 int32_t SparseKMeansTree::fit_node(KMeansNode* n, const std::vector<SPVEC>& training_samples) {
     if (training_samples.size() < this->_max_node_size) {
-        return EX_END;
+        return EXK_END;
     }
     
     if (this->_root->model == NULL) {
-        return EX_FAIL;
+        return EXK_FAIL;
     }
     
     if (n->model == NULL) {
@@ -80,26 +80,26 @@ const LeafPayLoad* SparseKMeansTree::search_for_leaf(const SPVEC& v) {
 int32_t SparseKMeansTree::_search_for_path(const SPVEC& v, KMeansNode* entry, std::vector<KMeansNode*>& res) const {
     if (entry == NULL) {
         std::cerr << "Child node is NULL in the children list." << std::endl;
-        return EX_FAIL;
+        return EXK_FAIL;
     }
     
     res.push_back(entry);
     if (this->is_leaf(entry)) {
-        return EX_END;
+        return EXK_END;
     }
 
     if (entry->model == NULL) {
         std::cerr << "Non leaf node have NULL model-ptr!" << std::endl;
-        return EX_FAIL;
+        return EXK_FAIL;
     }
 
     int32_t cid = entry->model->predict(v);
-    if (cid == EX_FAIL) {
+    if (cid == EXK_FAIL) {
         std::cerr << "Modle prediction failed!" << std::endl;
-        return EX_FAIL;
+        return EXK_FAIL;
     } else if (cid < 0 || cid >= entry->children.size()) {
         std::cerr << "Cluster ID is out of the scope of children list." << std::endl;
-        return EX_FAIL;
+        return EXK_FAIL;
     }   
 
     return _search_for_path(v, entry->children.at(cid), res);
@@ -127,7 +127,7 @@ int32_t SparseKMeansTree::insert(int32_t id, const SPVEC& v) {
         (*iter)->count += 1;
     }
 
-    return EX_SUC;
+    return EXK_SUC;
 }
 
 SparseKMeansTree::~SparseKMeansTree() {

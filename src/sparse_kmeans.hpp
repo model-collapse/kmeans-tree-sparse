@@ -5,9 +5,9 @@
 #include "sparse.hpp"
 #include <vector>
 
-#define EX_FAIL -1
-#define EX_END 1
-#define EX_SUC 0
+#define EXK_FAIL -1
+#define EXK_END 1
+#define EXK_SUC 0
 
 class SparseKMeansModel {
 private:
@@ -54,7 +54,7 @@ public:
         this->_assignment.clear();
         this->_u.clear();
         this->_samples = NULL;
-        return EX_SUC;
+        return EXK_SUC;
     }
 
     SparseKMeansModel(size_t k, size_t iterations = 1000, bool exclusive = true, const char* initiator = "kmeans++");
