@@ -37,5 +37,3 @@ $(OBJS_CXX): $(SRCS_CXX)
 
 clean:
 	rm -rf $(BUILD_DIR)/*
-
-default: $(LIB_TARGET)
