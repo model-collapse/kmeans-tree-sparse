@@ -77,7 +77,7 @@ public:
                       float cut_rate = 2);
     SparseKMeansModel(const SparseKMeansModel& t);
     int32_t fit(const std::vector<SPVEC>& samples);
-    int32_t predict(const SPVEC& x); 
+    int32_t predict(const SPVEC& x, TSVAL* dist=NULL); 
     std::vector<std::pair<int32_t, TSVAL>> predict(const SPVEC& x, int32_t k); 
 
     ~SparseKMeansModel() {

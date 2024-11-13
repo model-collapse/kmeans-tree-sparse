@@ -53,6 +53,7 @@ int32_t SparseKMeansModel::fit(const std::vector<SPVEC>& samples) {
             this->_degrees.push_back(this->_sample_degree_func(*iter));
         }
 
+        this->_hist.resize(this->_k);
         this->_u.resize(this->_samples->size());
     }
     
@@ -72,7 +73,7 @@ int32_t SparseKMeansModel::fit(const std::vector<SPVEC>& samples) {
     return EXK_SUC;
 }
 
-int32_t SparseKMeansModel::predict(const SPVEC& x) {
+int32_t SparseKMeansModel::predict(const SPVEC& x, TSVAL* dist) {
     // predict should be single thread
     TSVAL m = std::numeric_limits<TSVAL>::max();
     int32_t ret = 0;
@@ -84,6 +85,10 @@ int32_t SparseKMeansModel::predict(const SPVEC& x) {
         }
     }
 
+    if (dist != NULL){
+        *dist = m;
+    }
+    
     return ret;
 } 
 
@@ -96,6 +101,10 @@ std::vector<std::pair<int32_t, TSVAL>> SparseKMeansModel::predict(const SPVEC& x
 
     std::vector<std::pair<int32_t, TSVAL>> res;
     topk.finalize(res);
+
+    if (res.size() != k) {
+        std::cerr << "The topk list size is not k: " << res.size() << " | " << k << std::endl;
+    } 
 
     TSVAL thres = res.begin()->second * this->_cut_rate;
     for (auto iter = res.begin() + 1; iter != res.end(); iter++) {
@@ -192,12 +201,6 @@ int32_t SparseKMeansModel::kmeans_m_step() {
             omp_init_lock(locks + i);
         }
 
-        //std::cerr << "M adding centers" << std::endl;
-        if (this->_samples->size() != this->_assignment.size()) {
-            //std::cerr << "assignment size if not equal with sample set size" << std::endl;
-            return EXK_FAIL;
-        }
-
         #pragma omp parallel for
         for (int32_t i = 0; i < this->_samples->size(); i++) {
             auto eus = this->_u[i];
@@ -207,7 +210,7 @@ int32_t SparseKMeansModel::kmeans_m_step() {
                 omp_set_lock(locks + cid);
                 DSVEC& cnt = this->_centers[iter->first];
                 SPVEC v = this->_samples->at(i);
-                TSVAL w = 1.0 / iter->second;
+                TSVAL w = 1.0 / (iter->second + 10);
 
                 v *= w;
                 cnt += v;
@@ -221,8 +224,13 @@ int32_t SparseKMeansModel::kmeans_m_step() {
         }
         delete [] locks;
 
+        for (auto iter = this->_hist.begin(); iter != this->_hist.end(); iter++) {
+            std::cerr << *iter << ",";
+        }
+        std::cerr << std::endl;
+
         if(std::find(this->_hist.begin(), this->_hist.end(), 0) != this->_hist.end()) {
-            //std::cerr << "There is empty center, clustering failed" << std::endl;
+            std::cerr << "There is empty center, clustering failed" << std::endl;
             return EXK_FAIL;
         }
 
@@ -252,6 +260,10 @@ bool assignment_changed(const std::vector<int32_t>& assa, const std::vector<int3
 bool u_changed(const std::vector<std::vector<std::pair<int32_t, TSVAL>>>& ua, 
                const std::vector<std::vector<std::pair<int32_t, TSVAL>>>& ub) {
     for (auto itera = ua.begin(), iterb = ub.begin(); itera != ua.end(); itera++, iterb++) {
+        if (itera->size() ==0 || iterb->size() == 0) {
+            return false;
+        }
+
         if (itera->at(0) != iterb->at(0)) {
             return false;
         }
@@ -262,7 +274,7 @@ bool u_changed(const std::vector<std::vector<std::pair<int32_t, TSVAL>>>& ua,
 
 // get center assignment
 int32_t SparseKMeansModel::kmeans_e_step() {
-    //std::cerr << "E Step" << std::endl;
+    std::cerr << "E Step" << std::endl;
     if (this->_exclusive) {
         std::vector<int32_t> new_assignment;
         new_assignment.resize(this->_samples->size());
@@ -308,10 +320,13 @@ int32_t SparseKMeansModel::kmeans_e_step() {
             nu[i] = top_match;
         }
 
+        std::cerr << "E comparing" << std::endl;
         int32_t rett = EXK_SUC;
         if (u_changed(this->_u, nu)) {
+            std::cerr << "E comparing not changed" << std::endl;
             rett = EXK_END;
         }   
+        std::cerr << "E comparing done" << std::endl;
 
         this->_u = nu;
         return rett;

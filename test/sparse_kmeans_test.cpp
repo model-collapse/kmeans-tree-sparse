@@ -63,3 +63,22 @@ TEST_CASE("A simple K Means when empty center ==> fail") {
     int32_t st = model.fit(vecs);
     REQUIRE(st == EXK_FAIL);
 }
+
+TEST_CASE("Non exclusive K Means degenerates to exclusive if the K == 1") {
+    VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
+    std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+    std::vector<SPVEC> vecs = base.get_vectors(ids);
+
+    std::cerr << "init model..." << std::endl;
+    SparseKMeansModel model(2, 100, false, "kmeans++", dense_sparse_l2_distance);
+
+    std::cerr << "start fitting..." << std::endl;
+    int32_t st = model.fit(vecs);
+    REQUIRE(st != EXK_FAIL);
+
+    auto u = model.get_u();
+    for (int32_t i = 0; i < 9; i++) {
+        REQUIRE(u[i][0].first == u[i+1][0].first);
+        REQUIRE(u[i][0].first != u[i+10][0].first);
+    }
+}
