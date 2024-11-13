@@ -3,7 +3,7 @@
 #include "vector_base.hpp"
 #include <map>
 
-class MapPayLoad : LeafPayLoad {
+class MapPayLoad : public LeafPayLoad {
 public:
     size_t size();
     int32_t insert(int32_t id, TSVAL weight, const SPVEC& v);
@@ -13,8 +13,9 @@ public:
     LeafPayLoad* new_payload();
     void dispose(LeafPayLoad** t);
 
-    MapPayLoad(VectorBase* base);
+    MapPayLoad(VectorBase* base, size_t max_size);
 private:
+    size_t _max_size;
     SPVEC _scores;
     VectorBase* _vec_base;
 };

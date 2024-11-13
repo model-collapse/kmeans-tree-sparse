@@ -18,6 +18,7 @@ class SparseKMeansTree {
 private:
     KMeansNode* _root;
     int32_t _max_node_size;
+    DENSE_SPARSE_DIST_FUNC(_func);
     
     int32_t fit(const std::vector<SPVEC>& training_samples);
     int32_t fit_node(KMeansNode* n, const std::vector<SPVEC>& training_samples);
@@ -31,19 +32,24 @@ private:
     LeafPayLoad* _sample_payload;
     void dispose_sub_tree(KMeansNode* n);
 
+    std::string node_to_string(KMeansNode* n);
+    void node_string_traverse(int32_t depth, bool last_child, KMeansNode* n, std::vector<std::string>& lines);
 public:
     SparseKMeansTree(LeafPayLoad* sample_payload,
                      const std::vector<SPVEC>& training_samples, 
                      int32_t max_node_size = 1000,
                      int32_t k = 100,
                      int32_t iterations = 1000, 
-                     bool exclusive = false, 
-                     const char* initiator="kmeans++"
+                     bool exclusive = true, 
+                     const char* initiator="kmeans++",
+                     DENSE_SPARSE_DIST_FUNC(func) = inversed_dense_sparse_dot
                      );
 
     const LeafPayLoad* search_for_leaf(const SPVEC& v);
     std::vector<const KMeansNode*> search_for_path(const SPVEC& v) const;
     int32_t insert(int32_t id, const SPVEC& v);
+    std::string to_string();
+
 
     ~SparseKMeansTree();
 };
