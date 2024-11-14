@@ -144,15 +144,15 @@ int32_t SparseKMeansModel::kmeans_m_step() {
             this->_hist[i] = 0;
         }
 
-        omp_lock_t* locks = new omp_lock_t[this->_centers.size()];
-        for (int32_t i = 0; i < this->_centers.size(); i++) {
-            omp_init_lock(locks + i);
-        }
-
         //std::cerr << "M adding centers" << std::endl;
         if (this->_samples->size() != this->_assignment.size()) {
             //std::cerr << "assignment size if not equal with sample set size" << std::endl;
             return EXK_FAIL;
+        }
+
+        omp_lock_t* locks = new omp_lock_t[this->_centers.size()];
+        for (int32_t i = 0; i < this->_centers.size(); i++) {
+            omp_init_lock(locks + i);
         }
 
         #pragma omp parallel for

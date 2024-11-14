@@ -11,10 +11,12 @@ SparseKMeansTree::SparseKMeansTree(
     int32_t iterations, 
     bool exclusive, 
     const char* initiator,
-    DENSE_SPARSE_DIST_FUNC(func)) {
+    DENSE_SPARSE_DIST_FUNC(func),
+    SAMPLE_DEGREE_FUNC(deg_func),
+    float cut_rate) {
     this->_max_node_size = max_node_size;
     this->_root = new KMeansNode;
-    this->_root->model = new SparseKMeansModel(k, iterations, exclusive, initiator, func);
+    this->_root->model = new SparseKMeansModel(k, iterations, exclusive, initiator, func, deg_func, cut_rate);
     this->_root->count = 0;
     this->_root->children.clear();
     this->_sample_payload = sample_payload;

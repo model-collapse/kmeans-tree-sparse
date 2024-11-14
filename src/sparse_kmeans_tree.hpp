@@ -42,14 +42,15 @@ public:
                      int32_t iterations = 1000, 
                      bool exclusive = true, 
                      const char* initiator="kmeans++",
-                     DENSE_SPARSE_DIST_FUNC(func) = inversed_dense_sparse_dot
+                     DENSE_SPARSE_DIST_FUNC(func) = inversed_dense_sparse_dot,
+                     SAMPLE_DEGREE_FUNC(deg_func) = constant_degree,
+                     float cut_rate = 2
                      );
 
     const LeafPayLoad* search_for_leaf(const SPVEC& v);
     std::vector<const KMeansNode*> search_for_path(const SPVEC& v) const;
     int32_t insert(int32_t id, const SPVEC& v);
     std::string to_string();
-
 
     ~SparseKMeansTree();
 };

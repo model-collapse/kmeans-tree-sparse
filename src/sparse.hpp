@@ -15,18 +15,6 @@
 
 #define STR_HASH_FUNC(n) int32_t (*n)(std::string)
 
-
-int32_t initialize_vocabulary(const char* path);
-
-inline TSVAL spase_dense_dot(const TSVAL* dense, int32_t dim, const SPVEC& sparse) {
-    TSVAL dsum = 0;
-    for (auto iter = sparse.begin(); iter != sparse.end(); iter++) {
-        dsum += *iter * dense[iter.index()];
-    }
-
-    return dsum;
-}
-
 inline SPVEC sp_vec_from_string(std::string jsf, int32_t dim) {
     SPVEC ret(dim);
     nlohmann::json obj = nlohmann::json::parse(jsf);

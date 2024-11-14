@@ -3,6 +3,13 @@
 #include <vector>
 #include <queue>
 
+template <typename TID, typename TVAL>
+struct CompareByValue {
+    bool operator() (const std::pair<TID, TVAL>& a, const std::pair<TID, TVAL>& b) {
+        return a.second < b.second;
+    }
+};
+
 template <class TID, class TVAL>
 class Topk {
 public:
@@ -24,7 +31,7 @@ public:
   
 private:
     size_t _k;
-    std::priority_queue<std::pair<TID, TVAL>> _queue;
+    std::priority_queue<std::pair<TID, TVAL>, std::vector<std::pair<TID, TVAL>>, CompareByValue<TID, TVAL>> _queue;
 };
 
 #endif
