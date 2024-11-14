@@ -62,10 +62,11 @@ inline std::string sp_vec_to_string(const SPVEC& v) {
     std::ostringstream stream;
     stream << "[";
 
-    for (auto iter = v.begin(); iter != v.end(); iter++) {
-        stream << iter.index() << ":" << *iter << ", ";
-    }
-    stream.seekp(-2, std::ios_base::end);
+    stream << v.begin().index() << ":" << *v.begin();
+    if (v.size() > 1) {
+        stream << " ... " << v.rbegin().index() << ":" << *v.rbegin();
+    } 
+
     stream << "]";
     
     return stream.str();

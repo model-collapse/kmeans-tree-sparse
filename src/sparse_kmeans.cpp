@@ -224,11 +224,6 @@ int32_t SparseKMeansModel::kmeans_m_step() {
         }
         delete [] locks;
 
-        for (auto iter = this->_hist.begin(); iter != this->_hist.end(); iter++) {
-            std::cerr << *iter << ",";
-        }
-        std::cerr << std::endl;
-
         if(std::find(this->_hist.begin(), this->_hist.end(), 0) != this->_hist.end()) {
             std::cerr << "There is empty center, clustering failed" << std::endl;
             return EXK_FAIL;
@@ -274,7 +269,7 @@ bool u_changed(const std::vector<std::vector<std::pair<int32_t, TSVAL>>>& ua,
 
 // get center assignment
 int32_t SparseKMeansModel::kmeans_e_step() {
-    std::cerr << "E Step" << std::endl;
+    //std::cerr << "E Step" << std::endl;
     if (this->_exclusive) {
         std::vector<int32_t> new_assignment;
         new_assignment.resize(this->_samples->size());
@@ -316,17 +311,16 @@ int32_t SparseKMeansModel::kmeans_e_step() {
         #pragma omp parallel for
         for (int32_t i = 0; i < _samples->size(); i++) {
             auto top_match = this->predict(this->_samples->at(i), this->_degrees[i]);
-
             nu[i] = top_match;
         }
 
-        std::cerr << "E comparing" << std::endl;
+        //std::cerr << "E comparing" << std::endl;
         int32_t rett = EXK_SUC;
         if (u_changed(this->_u, nu)) {
-            std::cerr << "E comparing not changed" << std::endl;
+            //std::cerr << "E comparing not changed" << std::endl;
             rett = EXK_END;
         }   
-        std::cerr << "E comparing done" << std::endl;
+        //std::cerr << "E comparing done" << std::endl;
 
         this->_u = nu;
         return rett;
@@ -397,10 +391,14 @@ int32_t constant_degree(const DSVEC& d) {
 std::string SparseKMeansModel::to_string() const {
     std::ostringstream stream;
     stream << "{\"centers\": [";
-    for (int32_t i = 0; i < this->_centers.size(); i++) {
-        stream << "@" << i << ": "<< sp_vec_to_string(this->_centers[i]) << ", ";
+    
+    stream << "@0:" << sp_vec_to_string(this->_centers[0]);
+    if (this->_centers.size() > 2) {
+        stream << " ... " << "@" << this->_centers.size() - 1 << ":" << sp_vec_to_string(this->_centers[this->_centers.size() - 1]);
+    } else if (this->_centers.size() == 2) {
+        stream << " , " << "@" << this->_centers.size() - 1 << ":" << sp_vec_to_string(this->_centers[this->_centers.size() - 1]);
     }
-    stream.seekp(-2, std::ios_base::end);
+    
     stream << "]}";
 
     return stream.str();
