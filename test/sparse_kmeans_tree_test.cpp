@@ -21,7 +21,7 @@ TEST_CASE("A simple K Means Tree in L2") {
         ids.push_back(i);
     }
 
-    std::vector<SPVEC> vecs = base.get_vectors(ids);
+    std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
     MapPayLoad sbrk(&base, 10);
     SparseKMeansTree kmst(&sbrk, vecs, 10, 2, 100, true, "kmeans++", dense_sparse_l2_distance);

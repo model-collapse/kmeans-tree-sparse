@@ -47,7 +47,7 @@ $(LIB_TARGET) : $(OBJS)
 	mkdir -p $(BIN_DIR)
 	mv $@ $(BIN_DIR)/
 
-$(BUILD_DIR)/unit_test: $(OBJS) $(TEST_OBJS) $(BUILD_DIR)
+$(BUILD_DIR)/unit_test: $(OBJS) $(TEST_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 	mkdir -p $(BIN_DIR)
 	mv $@ $(BIN_DIR)/

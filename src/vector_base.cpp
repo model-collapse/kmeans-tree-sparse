@@ -14,10 +14,19 @@ size_t VectorBase::size() const {
     return this->_storage.size();
 }
 
-std::vector<SPVEC> VectorBase::get_vectors(const std::vector<int32_t>& ids) const {
+std::vector<SPVEC> VectorBase::export_vectors(const std::vector<int32_t>& ids) const {
     std::vector<SPVEC> ret;
     for (auto iter = ids.begin(); iter != ids.end(); iter++) {
         ret.push_back(this->_storage.at(*iter));
+    }
+
+    return ret;
+}
+
+std::vector<const SPVEC*> VectorBase::get_vectors(const std::vector<int32_t>& ids) const {
+    std::vector<const SPVEC*> ret;
+    for (auto iter = ids.begin(); iter != ids.end(); iter++) {
+        ret.push_back(&this->_storage.at(*iter));
     }
 
     return ret;

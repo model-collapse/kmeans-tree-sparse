@@ -5,7 +5,7 @@
 
 SparseKMeansTree::SparseKMeansTree(
     LeafPayLoad* sample_payload,
-    const std::vector<SPVEC>& training_samples, 
+    const std::vector<const SPVEC*>& training_samples, 
     int32_t max_node_size,
     int32_t k,
     int32_t iterations, 
@@ -26,11 +26,11 @@ SparseKMeansTree::SparseKMeansTree(
     this->fit(training_samples);
 }
 
-int32_t SparseKMeansTree::fit(const std::vector<SPVEC>& training_samples) {
+int32_t SparseKMeansTree::fit(const std::vector<const SPVEC*>& training_samples) {
     return fit_node(this->_root, training_samples);
 }
 
-int32_t SparseKMeansTree::fit_node(KMeansNode* n, const std::vector<SPVEC>& training_samples) {
+int32_t SparseKMeansTree::fit_node(KMeansNode* n, const std::vector<const SPVEC*>& training_samples) {
     //std::cerr << "Fitting..." << std::endl;
     if (training_samples.size() <= this->_max_node_size) {
         // This is leaf node, initialize payload
@@ -53,7 +53,7 @@ int32_t SparseKMeansTree::fit_node(KMeansNode* n, const std::vector<SPVEC>& trai
     if (n->model->is_exclusive()) {
         const std::vector<int32_t>& assignment = n->model->get_assignment();
         for (int32_t i = 0; i < n->model->get_k(); i++) {
-            std::vector<SPVEC> segment;
+            std::vector<const SPVEC*> segment;
             for (auto iter = assignment.begin(); iter != assignment.end(); iter ++) {
                 if (*iter == i) {
                     segment.push_back(training_samples.at(iter - assignment.begin()));

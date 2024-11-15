@@ -9,7 +9,8 @@ public:
     const SPVEC& at(int32_t id) const;
     void insert(int32_t id, const SPVEC& v);
     size_t size() const;
-    std::vector<SPVEC> get_vectors(const std::vector<int32_t>& ids) const;
+    std::vector<SPVEC> export_vectors(const std::vector<int32_t>& ids) const;
+    std::vector<const SPVEC*> get_vectors(const std::vector<int32_t>& ids) const;
 
     VectorBase();
     VectorBase(std::string filename, int32_t dim, STR_HASH_FUNC(f) = NULL);
@@ -17,5 +18,7 @@ public:
 private:
     std::map<int32_t, SPVEC> _storage;
 };
+
+
 
 #endif

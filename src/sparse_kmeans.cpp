@@ -38,7 +38,7 @@ SparseKMeansModel::SparseKMeansModel(const SparseKMeansModel& t) {
     this->_cut_rate = t._cut_rate;
 }
     
-int32_t SparseKMeansModel::fit(const std::vector<SPVEC>& samples) {
+int32_t SparseKMeansModel::fit(const std::vector<const SPVEC*>& samples) {
     this->_samples = &samples;
     //std::cerr << "Initializing" << std::endl;
     if (EXK_FAIL == initialize_centers()) {
@@ -50,7 +50,7 @@ int32_t SparseKMeansModel::fit(const std::vector<SPVEC>& samples) {
         this->_hist.resize(this->_k);
     } else {
         for (auto iter = this->_samples->begin(); iter != this->_samples->end(); iter++) {
-            this->_degrees.push_back(this->_sample_degree_func(*iter));
+            this->_degrees.push_back(this->_sample_degree_func(**iter));
         }
 
         this->_hist.resize(this->_k);
@@ -161,7 +161,7 @@ int32_t SparseKMeansModel::kmeans_m_step() {
             
             omp_set_lock(locks + cid);
             DSVEC& cnt = this->_centers[cid];
-            cnt += this->_samples->at(i);
+            cnt += *this->_samples->at(i);
             this->_hist[cid]++;
             omp_unset_lock(locks + cid);
         }
@@ -209,7 +209,7 @@ int32_t SparseKMeansModel::kmeans_m_step() {
 
                 omp_set_lock(locks + cid);
                 DSVEC& cnt = this->_centers[iter->first];
-                SPVEC v = this->_samples->at(i);
+                SPVEC v = *this->_samples->at(i);
                 TSVAL w = 1.0 / (iter->second + 10);
 
                 v *= w;
@@ -277,7 +277,7 @@ int32_t SparseKMeansModel::kmeans_e_step() {
         bool failed = false;
         #pragma omp parallel for
         for (int32_t i = 0; i < _samples->size(); i++) {
-            int32_t cid = this->predict(this->_samples->at(i));
+            int32_t cid = this->predict(*this->_samples->at(i));
             if (EXK_FAIL == cid) {
                 failed = true;
             } else {
@@ -310,7 +310,7 @@ int32_t SparseKMeansModel::kmeans_e_step() {
         bool failed = false;
         #pragma omp parallel for
         for (int32_t i = 0; i < _samples->size(); i++) {
-            auto top_match = this->predict(this->_samples->at(i), this->_degrees[i]);
+            auto top_match = this->predict(*this->_samples->at(i), this->_degrees[i]);
             nu[i] = top_match;
         }
 
@@ -337,7 +337,7 @@ int32_t SparseKMeansModel::initialize_centers() {
         int32_t first = rand() % this->_samples->size();
         //std::cerr << "first = " << first << std::endl;
         this->_centers.clear();    
-        DSVEC last_center = this->_samples->at(first);
+        DSVEC last_center = *this->_samples->at(first);
         
         //std::cerr << "start selecting...." << std::endl;
         while (this->_centers.size() < this->_k) {
@@ -345,7 +345,7 @@ int32_t SparseKMeansModel::initialize_centers() {
             
             #pragma omp parallel for
             for (int32_t i = 0; i < this->_samples->size(); i++){
-                scs[i] = this->_dist_func(this->_samples->at(i), last_center);
+                scs[i] = this->_dist_func(*this->_samples->at(i), last_center);
             }
 
             // integral
@@ -358,7 +358,7 @@ int32_t SparseKMeansModel::initialize_centers() {
             //std::cerr << "seed = " << seed  << "; max = " << *scs.rbegin() << std::endl;
 
             auto pick = std::lower_bound(scs.begin(), scs.end(), seed);
-            last_center = this->_samples->at(pick-scs.begin());
+            last_center = *this->_samples->at(pick-scs.begin());
         }
 
         for (int32_t i = 0; i < this->_k; i++) {
@@ -374,7 +374,7 @@ int32_t SparseKMeansModel::initialize_centers() {
         this->_centers.resize(this->_k);
         int32_t t = 0;
         for (auto iter = cids.begin(); iter != cids.end(); iter++) {
-            this->_centers[t] = this->_samples->at(*iter);
+            this->_centers[t] = *this->_samples->at(*iter);
             t++;
         }
     } else {

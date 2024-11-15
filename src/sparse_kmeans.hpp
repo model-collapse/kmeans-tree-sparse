@@ -34,7 +34,7 @@ private:
     std::vector<int32_t> _assignment;
     std::vector<std::vector<std::pair<int32_t, TSVAL>>> _u;
     std::vector<int32_t> _degrees;
-    const std::vector<SPVEC>* _samples;
+    const std::vector<const SPVEC*>* _samples;
 
     int32_t iterate();
     int32_t kmeans_m_step();
@@ -76,7 +76,7 @@ public:
                       SAMPLE_DEGREE_FUNC(degree_func) = constant_degree, 
                       float cut_rate = 2);
     SparseKMeansModel(const SparseKMeansModel& t);
-    int32_t fit(const std::vector<SPVEC>& samples);
+    int32_t fit(const std::vector<const SPVEC*>& samples);
     int32_t predict(const SPVEC& x, TSVAL* dist=NULL); 
     std::vector<std::pair<int32_t, TSVAL>> predict(const SPVEC& x, int32_t k); 
 

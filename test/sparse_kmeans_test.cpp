@@ -16,7 +16,7 @@ int32_t parse_xy_2(std::string v) {
 TEST_CASE("A simple K Means") {
     VectorBase base("kmeans.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    std::vector<SPVEC> vecs = base.get_vectors(ids);
+    std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
     std::cerr << "init model..." << std::endl;
     SparseKMeansModel model(2, 100, true, "kmeans++");
@@ -35,7 +35,7 @@ TEST_CASE("A simple K Means") {
 TEST_CASE("A simple K Means using L2") {
     VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    std::vector<SPVEC> vecs = base.get_vectors(ids);
+    std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
     std::cerr << "init model..." << std::endl;
     SparseKMeansModel model(2, 100, true, "kmeans++", dense_sparse_l2_distance);
@@ -54,7 +54,7 @@ TEST_CASE("A simple K Means using L2") {
 TEST_CASE("A simple K Means when empty center ==> fail") {
     VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    std::vector<SPVEC> vecs = base.get_vectors(ids);
+    std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
     std::cerr << "init model..." << std::endl;
     SparseKMeansModel model(2, 100, true, "kmeans++", inversed_dense_sparse_dot);
@@ -67,7 +67,7 @@ TEST_CASE("A simple K Means when empty center ==> fail") {
 TEST_CASE("Non exclusive K Means degenerates to exclusive if the K == 1") {
     VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    std::vector<SPVEC> vecs = base.get_vectors(ids);
+    std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
     std::cerr << "init model..." << std::endl;
     SparseKMeansModel model(2, 100, false, "kmeans++", dense_sparse_l2_distance);

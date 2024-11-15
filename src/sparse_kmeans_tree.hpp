@@ -20,8 +20,8 @@ private:
     int32_t _max_node_size;
     DENSE_SPARSE_DIST_FUNC(_func);
     
-    int32_t fit(const std::vector<SPVEC>& training_samples);
-    int32_t fit_node(KMeansNode* n, const std::vector<SPVEC>& training_samples);
+    int32_t fit(const std::vector<const SPVEC*>& training_samples);
+    int32_t fit_node(KMeansNode* n, const std::vector<const SPVEC*>& training_samples);
     bool is_leaf(const KMeansNode* n) const {
         return n->children.size() == 0;
     };
@@ -36,7 +36,7 @@ private:
     void node_string_traverse(int32_t depth, bool last_child, KMeansNode* n, std::vector<std::string>& lines);
 public:
     SparseKMeansTree(LeafPayLoad* sample_payload,
-                     const std::vector<SPVEC>& training_samples, 
+                     const std::vector<const SPVEC*>& training_samples, 
                      int32_t max_node_size = 1000,
                      int32_t k = 100,
                      int32_t iterations = 1000, 
