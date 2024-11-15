@@ -42,6 +42,8 @@ TEST_OBJS := $(TEST_OBJS_C) $(TEST_OBJS_CXX)
 CFLAGS := -lpthread -fopenmp -lstdc++ -std=c++11 -lm -g
 TEST_FLAGS := 
 
+mkdir -p $(BIN_DIR)
+mkdir -p $(BUILD_DIR)
 
 $(LIB_TARGET) : $(OBJS)
 	$(AR) rcs -o $(LIB_TARGET) $^
