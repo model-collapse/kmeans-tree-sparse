@@ -1,5 +1,5 @@
 # 伪命令
-.PHONY: clean buildlib buildso
+.PHONY: clean test
 
 BUILD_DIR := build
 SRC_DIR := src
@@ -42,30 +42,29 @@ TEST_OBJS := $(TEST_OBJS_C) $(TEST_OBJS_CXX)
 CFLAGS := -lpthread -fopenmp -lstdc++ -std=c++11 -lm -g
 TEST_FLAGS := 
 
-$(LIB_TARGET) : $(OBJS) $(BIN_DIR)
+$(LIB_TARGET) : $(OBJS)
 	$(AR) rcs -o $(LIB_TARGET) $^
-	mv $@ $(BIN_DIR)/
-
-$(BUILD_DIR)/unit_test: $(OBJS) $(TEST_OBJS) $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $^
-	mv $@ $(BIN_DIR)/
-
-$(BIN_DIR): 
 	mkdir -p $(BIN_DIR)
+	mv $@ $(BIN_DIR)/
 
+$(BUILD_DIR)/unit_test: $(OBJS) $(TEST_OBJS) $(BUILD_DIR)
+	$(CC) $(CFLAGS) -o $@ $^
+	mkdir -p $(BIN_DIR)
+	mv $@ $(BIN_DIR)/
+	
 $(BUILD_DIR): 
 	mkdir -p $(BUILD_DIR)
 
-$(OBJS_C): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.c $(BUILD_DIR): 
+$(OBJS_C): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.c $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(INC_DIRS) -c $< -o $@
 
-$(OBJS_CXX): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp $(BUILD_DIR): 
+$(OBJS_CXX): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp $(BUILD_DIR)
 	$(CXX) $(CFLAGS) $(INC_DIRS) -c $< -o $@
 
-$(TEST_OBJS_C): $(BUILD_DIR)/%.o : $(TEST_DIR)/%.c $(BUILD_DIR): 
+$(TEST_OBJS_C): $(BUILD_DIR)/%.o : $(TEST_DIR)/%.c $(BUILD_DIR)
 	$(CC) $(TEST_FLAGS) $(CFLAGS) $(TEST_INC_DIRS) -c $< -o $@
 
-$(TEST_OBJS_CXX): $(BUILD_DIR)/%.o : $(TEST_DIR)/%.cpp $(BUILD_DIR): 
+$(TEST_OBJS_CXX): $(BUILD_DIR)/%.o : $(TEST_DIR)/%.cpp $(BUILD_DIR)
 	$(CXX) $(TEST_FLAGS) $(CFLAGS) $(TEST_INC_DIRS) -c $< -o $@
 
 clean:
