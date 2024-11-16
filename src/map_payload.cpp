@@ -1,9 +1,10 @@
 #include "map_payload.hpp"
+#include <numeric>
 
 MapPayLoad::MapPayLoad(VectorBase* base, size_t max_size):
     _max_size(max_size), 
     _vec_base(base),
-    _scores(max_size) {
+    _scores(std::numeric_limits<int32_t>::max()) {
 
 }
 

@@ -86,7 +86,7 @@ void SparseKMeansTree::dispose_sub_tree(KMeansNode* n) {
     delete n->model;
 }
 
-const LeafPayLoad* SparseKMeansTree::search_for_leaf(const SPVEC& v) {
+const LeafPayLoad* SparseKMeansTree::search_for_leaf(const SPVEC& v) const {
     auto path = this->search_for_path(v);
     return (*path.rbegin())->storage;
 }
@@ -135,12 +135,13 @@ std::vector<const KMeansNode*> SparseKMeansTree::search_for_path(const SPVEC& v)
     return ret;
 }
 
-int32_t SparseKMeansTree::insert(int32_t id, const SPVEC& v) {
+int32_t SparseKMeansTree::insert(int32_t id, const SPVEC& v, TSVAL weight) {
     auto path = this->_search_for_path(v);
     for (auto iter = path.begin(); iter != path.end(); iter++) {
         (*iter)->count += 1;
     }
 
+    (*path.rbegin())->storage->insert(id, weight, v);
     return EXK_SUC;
 }
 

@@ -47,9 +47,9 @@ public:
                      float cut_rate = 2
                      );
 
-    const LeafPayLoad* search_for_leaf(const SPVEC& v);
+    const LeafPayLoad* search_for_leaf(const SPVEC& v) const;
     std::vector<const KMeansNode*> search_for_path(const SPVEC& v) const;
-    int32_t insert(int32_t id, const SPVEC& v);
+    int32_t insert(int32_t id, const SPVEC& v, TSVAL weight);
     std::string to_string();
 
     ~SparseKMeansTree();

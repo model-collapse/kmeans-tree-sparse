@@ -27,7 +27,7 @@ TEST_CASE("A simple K Means Tree in L2") {
     SparseKMeansTree kmst(&sbrk, vecs, 10, 2, 100, true, "kmeans++", dense_sparse_l2_distance);
 
     for (auto iter = ids.begin(); iter != ids.end(); iter++) {
-        kmst.insert(*iter, base.at(*iter));
+        kmst.insert(*iter, base.at(*iter), 1.0);
     }
 
     std::cout << kmst.to_string() << std::endl;

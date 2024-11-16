@@ -9,6 +9,7 @@ public:
     int32_t insert(int32_t id, TSVAL weight, const SPVEC& v);
     std::vector<SPVEC> get_all_vectors();
     std::set<int32_t> get_all_ids();
+    const SPVEC& get_scores() const { return this->_scores; };
 
     LeafPayLoad* new_payload();
     void dispose(LeafPayLoad** t);
