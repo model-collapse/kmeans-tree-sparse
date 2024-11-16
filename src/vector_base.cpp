@@ -32,6 +32,10 @@ std::vector<const SPVEC*> VectorBase::get_vectors(const std::vector<int32_t>& id
     return ret;
 }
 
+const std::map<int32_t, SPVEC> VectorBase::get_map() const {
+    return this->_storage;
+}
+
 VectorBase::VectorBase() {
 
 }
