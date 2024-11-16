@@ -69,5 +69,6 @@ $(TEST_OBJS_CXX): $(BUILD_DIR)/%.o : $(TEST_DIR)/%.cpp $(BUILD_DIR)
 
 clean:
 	rm -rf $(BUILD_DIR)/*
+	rm -rf $(BIN_DIR)/*
 
 test: $(BUILD_DIR)/unit_test
