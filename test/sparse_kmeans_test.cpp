@@ -14,7 +14,7 @@ int32_t parse_xy_2(std::string v) {
 }
 
 TEST_CASE("A simple K Means") {
-    VectorBase base("kmeans.jsonl", 2, parse_xy_2);
+    VectorBase base("../data/kmeans.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
     std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
@@ -33,7 +33,7 @@ TEST_CASE("A simple K Means") {
 }
 
 TEST_CASE("A simple K Means using L2") {
-    VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
+    VectorBase base("../data/kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
     std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
@@ -52,7 +52,7 @@ TEST_CASE("A simple K Means using L2") {
 }
 
 TEST_CASE("A simple K Means when empty center ==> fail") {
-    VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
+    VectorBase base("../data/kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
     std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 
@@ -65,7 +65,7 @@ TEST_CASE("A simple K Means when empty center ==> fail") {
 }
 
 TEST_CASE("Non exclusive K Means degenerates to exclusive if the K == 1") {
-    VectorBase base("kmeans_2.jsonl", 2, parse_xy_2);
+    VectorBase base("../data/kmeans_2.jsonl", 2, parse_xy_2);
     std::vector<int32_t> ids = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
     std::vector<const SPVEC*> vecs = base.get_vectors(ids);
 

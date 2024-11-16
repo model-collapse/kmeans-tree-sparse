@@ -15,7 +15,7 @@ int32_t parse_xy_3(std::string v) {
 }
 
 TEST_CASE("A simple K Means Tree in L2") {
-    VectorBase base("kmeans_3.jsonl", 2, parse_xy_3);
+    VectorBase base("../data/kmeans_3.jsonl", 2, parse_xy_3);
     std::vector<int32_t> ids;
     for (int32_t i = 0; i < 60; i++) {
         ids.push_back(i);
