@@ -26,7 +26,8 @@ std::vector<SPVEC> VectorBase::export_vectors(const std::vector<int32_t>& ids) c
 std::vector<const SPVEC*> VectorBase::get_vectors(const std::vector<int32_t>& ids) const {
     std::vector<const SPVEC*> ret;
     for (auto iter = ids.begin(); iter != ids.end(); iter++) {
-        ret.push_back(&this->_storage.at(*iter));
+        auto vptr = &this->_storage.at(*iter);
+        ret.push_back(vptr);
     }
 
     return ret;
