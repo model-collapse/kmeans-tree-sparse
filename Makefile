@@ -10,8 +10,8 @@ CC := /usr/bin/gcc
 CXX := /usr/bin/g++
 AR := /usr/bin/ar
 
-LIB_NAME := sparse_kmeans_tree
-LIB_TARGET := $(BUILD_DIR)/$(LIB_NAME).lib
+LIB_NAME := libsparse_kmeans_tree
+LIB_TARGET := $(BUILD_DIR)/$(LIB_NAME).a
 
 INC_DIRS := /usr/include ./_3rdparty/nlohmann_json
 INC_DIRS := $(addprefix -I, $(INC_DIRS))
