@@ -14,7 +14,7 @@ public:
     const std::map<int32_t, SPVEC> get_map() const;
 
     VectorBase();
-    VectorBase(std::string filename, int32_t dim, STR_HASH_FUNC(f) = NULL);
+    VectorBase(std::string filename, int32_t dim, STR_HASH_FUNC(f) = NULL, bool self_inc_id = false);
 
 private:
     std::map<int32_t, SPVEC> _storage;

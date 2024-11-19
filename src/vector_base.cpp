@@ -41,42 +41,59 @@ VectorBase::VectorBase() {
 
 }
 
-VectorBase::VectorBase(std::string filename, int32_t dim, STR_HASH_FUNC(f)) {
+VectorBase::VectorBase(std::string filename, int32_t dim, STR_HASH_FUNC(f), bool self_inc_id) {
     std::ifstream stream;
     stream.open(filename);
     if (!stream.is_open()) {
-        //std::cerr << "invalid file" << std::endl;
+        std::cerr << "invalid file" << std::endl;
         return;
     }
 
-    while (!stream.eof())  {
+    int32_t inc = 0;
+    bool sstop = false;
+    #pragma omp parallel
+    while (!sstop)  {
         int32_t id;
         std::string json_content;
-        
         std::string buf;
-        std::getline(stream, buf, '\t');
-        if (buf.size() == 0) {
-            break;
+
+        #pragma omp critical
+        {
+            if (self_inc_id) {        
+                std::getline(stream, buf, '\t');
+                if (buf.size() == 0) {
+                    sstop = true;
+                } else {
+                    id = std::stol(buf);
+                }
+            } else {
+                id = inc;
+                inc++;
+            }
+      
+            std::getline(stream, buf, '\n');
+            json_content = buf;
+            if (buf.size() == 0) {
+                sstop = true;
+            }
         }
 
-        id = std::stol(buf);
+        if (!sstop) {
+            SPVEC vec;
+            if (f == NULL) {
+                //std::cerr << "here" << std::endl;
+                vec = sp_vec_from_string(json_content, dim);
+            } else {
+                //std::cerr << "there" << std::endl;
+                vec = sp_vec_from_string(json_content, dim, f);
+            }
 
-        std::getline(stream, buf, '\n');
-        json_content = buf;
-
-        //std::cerr << "id = " << id << "\tcontent = " << json_content << std::endl;
-
-        SPVEC vec;
-        if (f == NULL) {
-            //std::cerr << "here" << std::endl;
-            vec = sp_vec_from_string(json_content, dim);
-        } else {
-            //std::cerr << "there" << std::endl;
-            vec = sp_vec_from_string(json_content, dim, f);
+            //std::cerr.flush();
+            #pragma omp critical
+            {
+                this->insert(id, vec);
+            }
         }
-
-        //std::cerr.flush();
-        this->insert(id, vec);
     }
 
     //std::cerr << "done" << std::endl;
